@@ -22,6 +22,7 @@ number_pages_read - number of pages of a book read
 social_minutes - number of minutes spent socializing with people
 '''
 
+user_names = ['rafa', 'marta']
 
 def process_date(date_str) -> datetime.date:
     date_array = date_str.split('-')
@@ -71,6 +72,9 @@ def get_input() -> tuple:
 
     else:
         name = input('name: ')
+        while name not in user_names:
+            print("Unauthorized User, please try again.")
+            name = input('name: ')
         date_str = input('date: ')
         morning_well_being = int(input('morning_well_being (1-very bad mood, 10-excellent mood): '))
         night_well_being = int(input('night_well_being (1-very bad mood, 10-excellent mood): '))
@@ -82,6 +86,9 @@ def get_input() -> tuple:
         sexual_relationships = input('sexual_relationships (y/n): ')
         number_of_pages_read = int(input('number_of_pages_read: '))
         social_minutes = int(input('social_minutes: '))
+
+
+
 
     return name, date_str, morning_well_being, night_well_being, hours_of_sleep, screen_time_minutes, workout_minutes, \
         outdoor_minutes, nutrition, sexual_relationships, number_of_pages_read, social_minutes
@@ -131,7 +138,7 @@ column_names = ['id', 'name', 'age', 'morning_well_being', 'night_well_being', '
                 'nutrition', 'sexual_relationships', 'number_pages_read', 'social_minutes']
 
 # Open a CSV file in write mode
-with open('C:\\Users\\rafae\\OneDrive\\Documentos\\Documentos\\happiness_tracker.csv', mode='a', newline='') as file:
+with open('C:\\Users\\Marta Costa\\PycharmProjects\\HappinessTracker\\happiness_tracker.csv', mode='a', newline='') as file:
     writer = csv.writer(file, delimiter=',')
 
     new_row = [id, name, age, morning_well_being, night_well_being, date, weekday, hours_of_sleep, screen_time_minutes,
