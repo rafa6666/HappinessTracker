@@ -23,6 +23,7 @@ social_minutes - number of minutes spent socializing with people
 '''
 
 user_names = ['rafa', 'marta']
+#usernames should not contain white spaces and here they should be written in lowercase
 
 def process_date(date_str) -> datetime.date:
     date_array = date_str.split('-')
@@ -46,9 +47,21 @@ def get_weather(date) -> tuple:
     weather_condition: str = forecast_day['condition']['text']
     return avg_temp, weather_condition
 
+def is_valid_date(date_str) -> bool:
+    # check if date is valid
+    try:
+        # Try to parse the string into a datetime object
+        datetime.datetime.strptime(date_str, '%d-%m-%Y')
+        return True
+    except ValueError:
+        return False
+
 
 def get_input() -> tuple:
-    input_type: int = int(input('type of input: 1-short and 2-long: '))
+    input_type: int = int(input('Type of input: 1-short and 2-long: '))
+    while input_type not in [1, 2]:
+        print("Can only accept 1 for short or 2 for long input")
+        input_type: int = int(input('Type of input: 1-short and 2-long: '))
 
     if input_type == 2:
         params = input(
@@ -71,23 +84,52 @@ def get_input() -> tuple:
         social_minutes = int(params[11])
 
     else:
-        name = input('name: ')
+        name = input('Name: ').strip().lower()
         while name not in user_names:
             print("Unauthorized User, please try again.")
-            name = input('name: ')
-        date_str = input('date: ')
-        morning_well_being = int(input('morning_well_being (1-very bad mood, 10-excellent mood): '))
-        night_well_being = int(input('night_well_being (1-very bad mood, 10-excellent mood): '))
-        hours_of_sleep = float(input('hours of sleep: '))
-        screen_time_minutes = int(input('screen_time (minutes): '))
-        workout_minutes = int(input('workout_minutes: '))
-        outdoor_minutes = int(input('outdoor_minutes: '))
-        nutrition = int(input('nutrition (1-horrible, 10-excellent): '))
-        sexual_relationships = input('sexual_relationships (y/n): ')
-        number_of_pages_read = int(input('number_of_pages_read: '))
-        social_minutes = int(input('social_minutes: '))
+            name = input('Name: ').strip().lower()
 
+        date_str = input("Date (type 't' for today, otherwise write in dd-mm-yyyy format: ")
+        while date_str.strip().lower() != 't' and not is_valid_date(date_str):
+            print("Uh oh date no good")
+            date_str = input("Date (type 't' for today, otherwise write in dd-mm-yyyy format: ")
 
+        morning_well_being = int(input('How was your mood in the morning (1-very bad mood, 10-excellent mood): '))
+        while not (1 <= morning_well_being <= 10):
+            print("Your mood evaluation must be an int from 1 to 10. Please try again.")
+            morning_well_being = int(input('How was your mood in the morning (1-very bad mood, 10-excellent mood): '))
+
+        night_well_being = int(input('How was your mood in the night (1-very bad mood, 10-excellent mood): '))
+        while not (1 <= night_well_being <= 10):
+            print("Your mood evaluation must be an int from 1 to 10. Please try again.")
+            night_well_being = int(input('How was your mood in the night (1-very bad mood, 10-excellent mood): '))
+
+        hours_of_sleep = float(input('How many hours did you sleep: '))
+        while hours_of_sleep > 24:
+            print("Did you really sleep for over a day? Try again")
+            hours_of_sleep = float(input('How many hours did you sleep: '))
+        if hours_of_sleep <= 3:
+            print("Girl, go to sleep.")
+
+        screen_time_minutes = int(input('How much time did you actively spend on your phone (minutes): '))
+
+        workout_minutes = int(input('How many minutes spent working out: '))
+
+        outdoor_minutes = int(input('How many minutes spent outdoor: '))
+
+        nutrition = int(input("How do you assess this day's nutrition (1-horrible, 10-excellent): "))
+        while not (1 <= nutrition <= 10):
+            print("Your nutrition evaluation must be an int from 1 to 10. Please try again.")
+            nutrition = int(input("How do you assess this day's nutrition (1-horrible, 10-excellent): "))
+
+        sexual_relationships = input('Did you have sexual relationships (y/n): ').strip().lower()
+        while sexual_relationships not in ['y', 'n']:
+            print("Please only use y for yes or n for no. Its for research purposes, I promise.")
+            sexual_relationships = input('Did you have sexual relationships (y/n): ').strip().lower()
+
+        number_of_pages_read = int(input('How many pages did you read: '))
+
+        social_minutes = int(input('How many minutes spent socially: '))
 
 
     return name, date_str, morning_well_being, night_well_being, hours_of_sleep, screen_time_minutes, workout_minutes, \
