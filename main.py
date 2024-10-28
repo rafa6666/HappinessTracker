@@ -1,5 +1,6 @@
 import csv
 import datetime
+from datetime import date
 import requests
 
 '''
@@ -22,12 +23,11 @@ number_pages_read - number of pages of a book read
 social_minutes - number of minutes spent socializing with people
 '''
 
-user_names = ['rafa', 'marta']
-#usernames should not contain white spaces and here they should be written in lowercase
+user_names = ['rafa', 'marta', 'test']
 
-def process_date(date_str) -> datetime.date:
+def process_date(date_str) -> date:
     date_array = date_str.split('-')
-    return datetime.date(int(date_array[2]), int(date_array[1]), int(date_array[0]))
+    return date(int(date_array[2]), int(date_array[1]), int(date_array[0]))
 
 
 def get_weekday(date) -> str:
@@ -51,19 +51,32 @@ def is_valid_date(date_str) -> bool:
     # check if date is valid
     try:
         # Try to parse the string into a datetime object
-        datetime.datetime.strptime(date_str, '%d-%m-%Y')
+        date.strptime(date_str, '%d-%m-%Y')
         return True
     except ValueError:
         return False
 
-
 def get_input() -> tuple:
-    input_type: int = int(input('Type of input: 1-short and 2-long: '))
-    while input_type not in [1, 2]:
-        print("Can only accept 1 for short or 2 for long input")
-        input_type: int = int(input('Type of input: 1-short and 2-long: '))
+    name: str
+    date_str: str
+    morning_well_being: int
+    night_well_being: int
+    hours_of_sleep: float
+    screen_time_minutes: int
+    workout_minutes: int
+    outdoor_minutes: int
+    nutrition: int
+    sexual_relationships: str
+    number_of_pages_read: int
+    social_minutes: int
 
-    if input_type == 2:
+    input_type: str = input('type of input: 1-short and 2-long: ')
+
+    while input_type not in ['1', '2']:
+        print('Please set input type to 1-short or 2-long')
+        input_type = input('type of input: 1-short and 2-long: ')
+
+    if input_type == '2':
         params = input(
             'name, date, morning_well_being (1-very bad mood, 10-excellent mood), \n'
             'night_well_being (1-very bad mood, 10-excellent mood), hours_of_sleep, screen_time (minutes), \n'
@@ -83,14 +96,27 @@ def get_input() -> tuple:
         number_of_pages_read = int(params[10])
         social_minutes = int(params[11])
 
+        if name not in user_names:
+            raise Exception('Unauthorized User, please try again.')
+        elif date_str.strip().lower() != 't' and not is_valid_date(date_str):
+            raise Exception('Uh oh date no good')
+        elif not 1 <= morning_well_being <= 10 or not 1 <= night_well_being <= 10:
+            raise Exception('incorrect well being value')
+        elif hours_of_sleep > 24:
+            raise Exception('Did you really sleep for over a day? Try again')
+        elif not 1 <= nutrition <= 10:
+            raise Exception('Your nutrition evaluation must be an int from 1 to 10. Please try again')
+        elif sexual_relationships not in ['y', 'n']:
+            raise Exception('Please only use y for yes or n for no. Its for research purposes, I promise')
+
     else:
-        name = input('Name: ').strip().lower()
+        name = input('Name: ')
         while name not in user_names:
             print("Unauthorized User, please try again.")
             name = input('Name: ').strip().lower()
 
         date_str = input("Date (type 't' for today, otherwise write in dd-mm-yyyy format: ")
-        while date_str.strip().lower() != 't' and not is_valid_date(date_str):
+        while date_str.strip().lower() != 't' and date_str.strip().lower() != 'y' and not is_valid_date(date_str):
             print("Uh oh date no good")
             date_str = input("Date (type 't' for today, otherwise write in dd-mm-yyyy format: ")
 
@@ -136,8 +162,13 @@ def get_input() -> tuple:
         outdoor_minutes, nutrition, sexual_relationships, number_of_pages_read, social_minutes
 
 def process_params(name, date_str, sexual_relationships) -> tuple:
+    date: datetime.date
+    today: datetime.date = datetime.date.today()
     if date_str == 't':
-        date = datetime.datetime.today().date()
+        date = today
+    elif date_str == 'y':
+        time_delta: datetime.timedelta = datetime.timedelta(1)
+        date = today - time_delta
     else:
         date = process_date(date_str)
 
@@ -162,7 +193,8 @@ def process_params(name, date_str, sexual_relationships) -> tuple:
         id = 1
         age = 23
     else:
-        raise Exception('unknown user')
+        id = -1
+        age = -1
 
     # Get weekday from date
     weekday = get_weekday(date)
@@ -180,13 +212,12 @@ column_names = ['id', 'name', 'age', 'morning_well_being', 'night_well_being', '
                 'nutrition', 'sexual_relationships', 'number_pages_read', 'social_minutes']
 
 # Open a CSV file in write mode
-with open('C:\\Users\\Marta Costa\\PycharmProjects\\HappinessTracker\\happiness_tracker.csv', mode='a', newline='') as file:
+with open('C:\\Users\\rafae\\OneDrive\\Documentos\\Documentos\\happiness_tracker.csv', mode='a', newline='') as file:
     writer = csv.writer(file, delimiter=',')
 
     new_row = [id, name, age, morning_well_being, night_well_being, date, weekday, hours_of_sleep, screen_time_minutes,
-               workout_minutes, outdoor_minutes,
-               weather_condition, avg_temp, nutrition, sexual_relationships_coded, number_of_pages_read,
-               social_minutes]
+               workout_minutes, outdoor_minutes, weather_condition, avg_temp, nutrition, sexual_relationships_coded,
+               number_of_pages_read, social_minutes]
 
     # Write a single line to the CSV file
     writer.writerow(new_row)
