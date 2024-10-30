@@ -221,3 +221,7 @@ with open('C:\\Users\\rafae\\OneDrive\\Documentos\\Documentos\\happiness_tracker
 
     # Write a single line to the CSV file
     writer.writerow(new_row)
+
+
+#C:\\Users\\rafae\\OneDrive\\Documentos\\Documentos\\happiness_tracker.csv
+
