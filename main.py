@@ -1,6 +1,6 @@
 import csv
 import datetime
-from datetime import date
+import datetime
 import requests
 
 '''
@@ -25,9 +25,9 @@ social_minutes - number of minutes spent socializing with people
 
 user_names = ['rafa', 'marta', 'test']
 
-def process_date(date_str) -> date:
+def process_date(date_str) -> datetime.date:
     date_array = date_str.split('-')
-    return date(int(date_array[2]), int(date_array[1]), int(date_array[0]))
+    return datetime.date(int(date_array[2]), int(date_array[1]), int(date_array[0]))
 
 
 def get_weekday(date) -> str:
@@ -51,7 +51,7 @@ def is_valid_date(date_str) -> bool:
     # check if date is valid
     try:
         # Try to parse the string into a datetime object
-        date.strptime(date_str, '%d-%m-%Y')
+        datetime.datetime.strptime(date_str, '%d-%m-%Y')
         return True
     except ValueError:
         return False
@@ -98,7 +98,7 @@ def get_input() -> tuple:
 
         if name not in user_names:
             raise Exception('Unauthorized User, please try again.')
-        elif date_str.strip().lower() != 't' and not is_valid_date(date_str):
+        elif date_str.strip().lower() != 't' and date_str.strip().lower() != 'y' and not is_valid_date(date_str):
             raise Exception('Uh oh date no good')
         elif not 1 <= morning_well_being <= 10 or not 1 <= night_well_being <= 10:
             raise Exception('incorrect well being value')
